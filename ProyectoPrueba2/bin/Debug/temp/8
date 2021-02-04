@@ -1,0 +1,21 @@
+EXEC sp_configure filestream_access_level, 2  
+RECONFIGURE;
+
+create database Archivo;
+use Archivo;
+
+create table documentos(
+IdDocuemento uniqueidentifier not null rowguidcol unique default newid(),
+Documento varbinary(MAX) filestream null
+);
+
+SELECT *from documentos;
+SELECT Documento from documentos
+SELECT Documento.PathName() from documentos;
+
+declare @Documento as varbinary (max)
+select @Documento = cast(BULKCOLUMN as varbinary (max))
+from openrowset (bulk 'C:\Users\melen\Desktop\1.xlsx', single_blob) as DOC;
+
+insert into documentos(Documento) values (@Documento);
+use Archivo;
